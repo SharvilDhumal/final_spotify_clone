@@ -1,0 +1,1801 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Spotify - Music for Everyone</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* Base Styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Montserrat", sans-serif;
+        color: white;
+        overflow-x: hidden;
+      }
+
+      #background-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        background-color: #000;
+      }
+
+      .spotify-container {
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+
+      /* Navbar Styles */
+      .navbar {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        padding: 20px 40px;
+        z-index: 100;
+        background-color: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(10px);
+      }
+
+      .navbar-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 24px;
+        font-weight: 700;
+        color: white;
+        text-decoration: none;
+      }
+
+      .logo i {
+        font-size: 32px;
+        color: #1db954;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+      }
+
+      .nav-links a {
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 16px;
+        transition: color 0.3s;
+      }
+
+      .nav-links a:hover {
+        color: #1db954;
+      }
+
+      .divider {
+        width: 1px;
+        height: 20px;
+        background-color: white;
+        opacity: 0.2;
+      }
+
+      .signup-link,
+      .login-link {
+        padding: 10px 25px;
+        border-radius: 25px;
+        font-weight: 600;
+      }
+
+      .signup-link {
+        color: white;
+        border: 1px solid white;
+      }
+
+      .signup-link:hover {
+        color: white;
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+
+      .login-link {
+        background-color: white !important;
+        color: black !important;
+        padding: 10px 25px;
+        border-radius: 25px;
+        font-weight: 600;
+        transition: none;
+      }
+
+      .login-link:hover {
+        background-color: white !important;
+        color: black !important;
+      }
+
+      .mobile-menu-btn {
+        display: none;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+      }
+
+      /* Hero Section */
+      .hero {
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        padding: 0 40px;
+        position: relative;
+      }
+
+      .hero-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding-top: 80px;
+      }
+
+      .hero h1 {
+        font-size: 80px;
+        font-weight: 700;
+        line-height: 1.1;
+        margin-bottom: 30px;
+        max-width: 700px;
+      }
+
+      .hero p {
+        font-size: 24px;
+        margin-bottom: 40px;
+        max-width: 600px;
+      }
+
+      .cta-btn {
+        background-color: #1db954;
+        color: white;
+        border: none;
+        border-radius: 25px;
+        padding: 15px 50px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .cta-btn:hover {
+        background-color: #1ed760;
+        transform: scale(1.05);
+      }
+
+      /* Featured Section */
+      .featured {
+        padding: 100px 40px;
+        background-color: #121212;
+      }
+
+      .featured h2 {
+        font-size: 40px;
+        margin-bottom: 50px;
+        text-align: center;
+      }
+
+      .featured-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 30px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .featured-card {
+        background-color: #181818;
+        border-radius: 10px;
+        padding: 20px;
+        transition: all 0.3s;
+        cursor: pointer;
+      }
+
+      .featured-card:hover {
+        background-color: #282828;
+        transform: translateY(-5px);
+      }
+
+      .card-image {
+        width: 100%;
+        aspect-ratio: 1;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 20px;
+      }
+
+      .card-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .featured-card h3 {
+        font-size: 20px;
+        margin-bottom: 10px;
+      }
+
+      .featured-card p {
+        color: #b3b3b3;
+        font-size: 16px;
+      }
+
+      /* Section Header */
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding: 0 20px;
+        max-width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .section-header h2 {
+        font-size: 40px;
+        margin: 0;
+      }
+
+      .show-all {
+        color: #b3b3b3;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 16px;
+        transition: color 0.3s;
+      }
+
+      .show-all:hover {
+        color: #1db954;
+      }
+
+      /* Card hover effects */
+      .card-hover-effect {
+        position: relative;
+      }
+
+      .play-button {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        width: 40px;
+        height: 40px;
+        background-color: #1db954;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        z-index: 2;
+      }
+
+      .play-button i {
+        color: white;
+        font-size: 16px;
+        margin-left: 2px;
+      }
+
+      .featured-card:hover .play-button,
+      .artist-card:hover .play-button,
+      .album-single-card:hover .play-button,
+      .radio-card:hover .play-button,
+      .chart-card:hover .play-button,
+      .india-card:hover .play-button,
+      .trending-song-card:hover .play-button {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* Trending Songs Section */
+      .trending-songs {
+        padding: 80px 0;
+        background-color: #000;
+      }
+
+      .trending-songs-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      .trending-songs-scroll {
+        display: flex;
+        gap: 20px;
+        overflow-x: auto;
+        padding-bottom: 20px;
+        scrollbar-width: none;
+      }
+
+      .trending-songs-scroll::-webkit-scrollbar {
+        display: none;
+      }
+
+      .trending-song-card {
+        background-color: #181818;
+        padding: 15px;
+        border-radius: 8px;
+        transition: all 0.3s;
+        cursor: pointer;
+        min-width: 200px;
+        width: 200px;
+        flex-shrink: 0;
+      }
+
+      .trending-song-card:hover {
+        background-color: #282828;
+      }
+
+      .trending-song-cover {
+        width: 100%;
+        aspect-ratio: 1;
+        border-radius: 6px;
+        margin-bottom: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      }
+
+      .trending-song-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 6px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .trending-song-artist {
+        font-size: 14px;
+        color: #b3b3b3;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      /* Popular Artists Section */
+      .popular-artists {
+        padding: 80px 0 100px;
+        background-color: #121212;
+      }
+
+      .artists-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 24px;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      .artist-card {
+        background-color: #181818;
+        padding: 20px;
+        border-radius: 8px;
+        transition: all 0.3s;
+        cursor: pointer;
+        text-align: center;
+      }
+
+      .artist-card:hover {
+        background-color: #282828;
+      }
+
+      .artist-image {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        margin: 0 auto 15px;
+        object-fit: cover;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      }
+
+      .artist-name {
+        font-size: 16px;
+        font-weight: 600;
+      }
+
+      .artist-label {
+        font-size: 14px;
+        color: #b3b3b3;
+        margin-top: 4px;
+      }
+
+      /* Popular Albums & Singles Section */
+      .popular-albums-singles {
+        padding: 80px 0;
+        background-color: #000;
+      }
+
+      .albums-singles-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 24px;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      .album-single-card {
+        background-color: #181818;
+        padding: 20px;
+        border-radius: 8px;
+        transition: all 0.3s;
+        cursor: pointer;
+        text-align: center;
+        position: relative;
+      }
+
+      .album-single-card:hover {
+        background-color: #282828;
+      }
+
+      .cover-container {
+        position: relative;
+        margin-bottom: 15px;
+      }
+
+      .type-badge {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        z-index: 1;
+      }
+
+      .album-badge {
+        background-color: #1db954;
+        color: #000;
+      }
+
+      .single-badge {
+        background-color: #4687d6;
+        color: #fff;
+      }
+
+      .album-single-cover {
+        width: 100%;
+        aspect-ratio: 1;
+        border-radius: 4px;
+        object-fit: cover;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      }
+
+      .album-single-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .album-single-artist {
+        font-size: 14px;
+        color: #b3b3b3;
+      }
+
+      /* Popular Radio Section */
+      .popular-radio {
+        padding: 80px 0 100px;
+        background-color: #121212;
+      }
+
+      .radio-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 24px;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      .radio-card {
+        background-color: #181818;
+        padding: 20px;
+        border-radius: 8px;
+        transition: all 0.3s;
+        cursor: pointer;
+        text-align: center;
+      }
+
+      .radio-card:hover {
+        background-color: #282828;
+      }
+
+      .radio-cover {
+        width: 100%;
+        aspect-ratio: 1;
+        border-radius: 4px;
+        margin-bottom: 15px;
+        object-fit: cover;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      }
+
+      .radio-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+
+      .radio-description {
+        font-size: 14px;
+        color: #b3b3b3;
+      }
+
+      /* Featured Charts Section */
+      .featured-charts {
+        padding: 80px 0;
+        background-color: #000;
+      }
+
+      .charts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      .chart-card {
+        background-color: #181818;
+        border-radius: 6px;
+        transition: all 0.3s;
+        cursor: pointer;
+        overflow: hidden;
+      }
+
+      .chart-card:hover {
+        background-color: #282828;
+      }
+
+      .chart-cover {
+        width: 100%;
+        aspect-ratio: 1;
+        object-fit: cover;
+      }
+
+      .chart-content {
+        padding: 12px;
+      }
+
+      .chart-title {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 6px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .chart-description {
+        font-size: 12px;
+        color: #b3b3b3;
+        margin-bottom: 6px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .chart-type {
+        display: inline-block;
+        padding: 3px 6px;
+        background-color: #1db954;
+        color: black;
+        border-radius: 3px;
+        font-size: 10px;
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+
+      /* India's Best Section */
+      .indias-best {
+        padding: 80px 0 100px;
+        background-color: #121212;
+      }
+
+      .india-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      .india-card {
+        background-color: #181818;
+        border-radius: 6px;
+        transition: all 0.3s;
+        cursor: pointer;
+        overflow: hidden;
+      }
+
+      .india-card:hover {
+        background-color: #282828;
+      }
+
+      .india-cover {
+        width: 100%;
+        aspect-ratio: 1;
+        object-fit: cover;
+      }
+
+      .india-content {
+        padding: 12px;
+      }
+
+      .india-title {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 6px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .india-description {
+        font-size: 12px;
+        color: #b3b3b3;
+        margin-bottom: 6px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .india-type {
+        display: inline-block;
+        padding: 3px 6px;
+        background-color: #4687d6;
+        color: white;
+        border-radius: 3px;
+        font-size: 10px;
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+
+      /* Footer */
+      .footer {
+        background-color: #000;
+        padding: 80px 40px 30px;
+        border-top: 1px solid #282828;
+      }
+
+      .footer-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 50px;
+        margin-bottom: 50px;
+      }
+
+      .footer-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 24px;
+        font-weight: 700;
+      }
+
+      .footer-logo i {
+        font-size: 32px;
+        color: #1db954;
+      }
+
+      .footer-links {
+        display: flex;
+        gap: 80px;
+      }
+
+      .footer-column {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .footer-column h4 {
+        color: #b3b3b3;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .footer-column a {
+        color: white;
+        text-decoration: none;
+        font-size: 16px;
+        transition: color 0.3s;
+      }
+
+      .footer-column a:hover {
+        color: #1db954;
+      }
+
+      .social-icons {
+        display: flex;
+        gap: 20px;
+      }
+
+      .social-icons a {
+        color: white;
+        font-size: 24px;
+        transition: color 0.3s;
+      }
+
+      .social-icons a:hover {
+        color: #1db954;
+      }
+
+      .footer-bottom {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        padding-top: 30px;
+        border-top: 1px solid #282828;
+      }
+
+      .legal-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      .legal-links a {
+        color: #b3b3b3;
+        text-decoration: none;
+        font-size: 12px;
+        transition: color 0.3s;
+      }
+
+      .legal-links a:hover {
+        color: white;
+      }
+
+      .copyright {
+        color: #b3b3b3;
+        font-size: 12px;
+      }
+
+      /* Responsive Styles */
+      @media (max-width: 1024px) {
+        .hero h1 {
+          font-size: 60px;
+        }
+
+        .hero p {
+          font-size: 20px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .navbar {
+          padding: 15px 20px;
+        }
+
+        .nav-links {
+          display: none;
+        }
+
+        .mobile-menu-btn {
+          display: block;
+        }
+
+        .hero {
+          padding: 0 20px;
+          text-align: center;
+        }
+
+        .hero h1 {
+          font-size: 48px;
+          max-width: 100%;
+        }
+
+        .hero p {
+          font-size: 18px;
+          max-width: 100%;
+        }
+
+        .featured,
+        .trending-songs,
+        .popular-artists,
+        .featured-charts,
+        .indias-best {
+          padding: 60px 0;
+        }
+
+        .featured h2,
+        .section-header h2 {
+          font-size: 32px;
+        }
+
+        .section-header {
+          padding: 0 20px;
+        }
+
+        .artists-grid,
+        .charts-grid,
+        .india-grid {
+          grid-template-columns: repeat(3, 1fr);
+          padding: 0 20px;
+        }
+
+        .footer-links {
+          gap: 40px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .hero h1 {
+          font-size: 36px;
+        }
+
+        .hero p {
+          font-size: 16px;
+        }
+
+        .featured-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .artists-grid,
+        .charts-grid,
+        .india-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .artist-image {
+          width: 100px;
+          height: 100px;
+        }
+
+        .footer-links {
+          width: 100%;
+          justify-content: space-between;
+          gap: 30px;
+        }
+
+        .footer-column {
+          flex: 1;
+        }
+
+        .social-icons {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Three.js Background Canvas -->
+    <div id="background-canvas"></div>
+
+    <!-- Main Content -->
+    <div class="spotify-container">
+      <!-- Navigation Bar -->
+      <nav class="navbar">
+        <div class="navbar-container">
+          <div class="logo">
+            <i class="fab fa-spotify"></i>
+            <span>Spotify</span>
+          </div>
+          <div class="nav-links">
+            <a href="#">Premium</a>
+            <a href="#">Support</a>
+            <a href="#">Download</a>
+            <div class="divider"></div>
+            <a href="#" class="signup-link">Sign up</a>
+            <a href="#" class="login-link">Log in</a>
+          </div>
+          <button class="mobile-menu-btn">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      </nav>
+
+      <!-- Hero Section -->
+      <section class="hero">
+        <div class="hero-content">
+          <h1>Music for everyone.</h1>
+          <p>Millions of songs. No credit card needed.</p>
+          <button class="cta-btn">GET SPOTIFY FREE</button>
+        </div>
+      </section>
+
+      <!-- Featured Content -->
+      <section class="featured">
+        <h2>What's on Spotify?</h2>
+        <div class="featured-grid">
+          <div class="featured-card card-hover-effect">
+            <div class="card-image">
+              <img src="albums.jpg" alt="Albums" />
+            </div>
+            <h3>Albums</h3>
+            <p>Over 100 million songs</p>
+            <div class="play-button">
+              <i class="fas fa-play"></i>
+            </div>
+          </div>
+          <div class="featured-card card-hover-effect">
+            <div class="card-image">
+              <img
+                src="https://images.unsplash.com/photo-1494232410401-ad00d5433cfa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cGxheWxpc3R8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60"
+                alt="Playlists"
+              />
+            </div>
+            <h3>Playlists</h3>
+            <p>Curated for every mood</p>
+            <div class="play-button">
+              <i class="fas fa-play"></i>
+            </div>
+          </div>
+          <div class="featured-card card-hover-effect">
+            <div class="card-image">
+              <img
+                src="https://images.unsplash.com/photo-1501612780327-45045538702b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fGNvbmNlcnR8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60"
+                alt="Artists"
+              />
+            </div>
+            <h3>Artists</h3>
+            <p>Follow your favorites</p>
+            <div class="play-button">
+              <i class="fas fa-play"></i>
+            </div>
+          </div>
+          <div class="featured-card card-hover-effect">
+            <div class="card-image">
+              <img
+                src="https://images.unsplash.com/photo-1478737270239-2f02b77fc618?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cG9kY2FzdHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60"
+                alt="Podcasts"
+              />
+            </div>
+            <h3>Podcasts</h3>
+            <p>Discover new stories</p>
+            <div class="play-button">
+              <i class="fas fa-play"></i>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Other sections -->
+      <section class="trending-songs">
+        <div class="section-header">
+          <h2>Trending songs</h2>
+          <a href="#" class="show-all">Show all</a>
+        </div>
+        <div class="trending-songs-container">
+          <div class="trending-songs-scroll" id="trending-songs-scroll">
+            <!-- Songs will be populated by JavaScript -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Popular Artists Section -->
+      <section class="popular-artists">
+        <div class="section-header">
+          <h2>Popular artists</h2>
+          <a href="#" class="show-all">Show all</a>
+        </div>
+        <div class="artists-grid" id="popular-artists-grid">
+          <!-- Artists will be populated by JavaScript -->
+        </div>
+      </section>
+
+      <!-- Combined Albums & Singles Section -->
+      <section class="popular-albums-singles">
+        <div class="section-header">
+          <h2>Popular albums & singles</h2>
+          <a href="#" class="show-all">Show all</a>
+        </div>
+        <div class="albums-singles-grid" id="popular-albums-singles-grid">
+          <!-- Albums and singles will be populated by JavaScript -->
+        </div>
+      </section>
+
+      <!-- Popular Radio Section -->
+      <section class="popular-radio">
+        <div class="section-header">
+          <h2>Popular radio</h2>
+          <a href="#" class="show-all">Show all</a>
+        </div>
+        <div class="radio-grid" id="popular-radio-grid">
+          <!-- Radio stations will be populated by JavaScript -->
+        </div>
+      </section>
+
+      <!-- Featured Charts Section -->
+      <section class="featured-charts">
+        <div class="section-header">
+          <h2>Featured Charts</h2>
+          <a href="#" class="show-all">Show all</a>
+        </div>
+        <div class="charts-grid" id="featured-charts-grid">
+          <!-- Charts will be populated by JavaScript -->
+        </div>
+      </section>
+
+      <!-- India's Best Section -->
+      <section class="indias-best">
+        <div class="section-header">
+          <h2>India's Best</h2>
+          <a href="#" class="show-all">Show all</a>
+        </div>
+        <div class="india-grid" id="indias-best-grid">
+          <!-- India's best content will be populated by JavaScript -->
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="footer">
+        <div class="footer-container">
+          <div class="footer-logo">
+            <i class="fab fa-spotify"></i>
+            <span>Spotify</span>
+          </div>
+          <div class="footer-links">
+            <div class="footer-column">
+              <h4>Company</h4>
+              <a href="#">About</a>
+              <a href="#">Jobs</a>
+              <a href="#">For the Record</a>
+            </div>
+            <div class="footer-column">
+              <h4>Communities</h4>
+              <a href="#">For Artists</a>
+              <a href="#">Developers</a>
+              <a href="#">Advertising</a>
+              <a href="#">Investors</a>
+              <a href="#">Vendors</a>
+            </div>
+            <div class="footer-column">
+              <h4>Useful links</h4>
+              <a href="#">Support</a>
+              <a href="#">Web Player</a>
+              <a href="#">Free Mobile App</a>
+            </div>
+          </div>
+          <div class="social-icons">
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <div class="legal-links">
+            <a href="#">Legal</a>
+            <a href="#">Privacy Center</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Cookies</a>
+            <a href="#">About Ads</a>
+          </div>
+          <div class="copyright">
+            <span>© 2023 Spotify AB</span>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Scene setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(
+          75,
+          window.innerWidth / window.innerHeight,
+          0.1,
+          1000
+        );
+        const renderer = new THREE.WebGLRenderer({
+          alpha: true,
+          antialias: true,
+          powerPreference: "low-power", // Better for performance
+        });
+
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0x000000, 0); // Transparent background
+        document
+          .getElementById("background-canvas")
+          .appendChild(renderer.domElement);
+
+        // Create musical note shapes
+        function createNoteShape() {
+          const shape = new THREE.Shape();
+
+          // Draw a quarter note shape
+          shape.moveTo(0, 0);
+          shape.lineTo(0.2, 0);
+          shape.lineTo(0.2, -0.8);
+          shape.bezierCurveTo(0.2, -1.2, 0.6, -1.2, 0.6, -0.8);
+          shape.bezierCurveTo(0.6, -0.4, 0.2, -0.4, 0.2, -0.8);
+          shape.lineTo(0.2, 0);
+
+          return shape;
+        }
+
+        // Particles setup - using musical notes
+        const notesCount = 250; // Reduced count for bigger, more visible notes
+
+        const notesGeometry = new THREE.BufferGeometry();
+
+        // Positions
+        const posArray = new Float32Array(notesCount * 3);
+        // Scales
+        const scaleArray = new Float32Array(notesCount);
+        // Speeds
+        const speedArray = new Float32Array(notesCount);
+        // Rotations
+        const rotationArray = new Float32Array(notesCount);
+
+        // Initialize properties for each note
+        for (let i = 0; i < notesCount; i++) {
+          // Random positions
+          posArray[i * 3] = (Math.random() - 0.5) * 15; // x - reduced spread
+          posArray[i * 3 + 1] = (Math.random() - 0.5) * 15; // y - reduced spread
+          posArray[i * 3 + 2] = (Math.random() - 0.5) * 15; // z - reduced spread
+
+          // Random scales (0.3 to 0.6) - increased size
+          scaleArray[i] = 0.3 + Math.random() * 0.3;
+
+          // Random speeds (0.001 to 0.003) - slightly reduced for better visibility
+          speedArray[i] = 0.001 + Math.random() * 0.002;
+
+          // Random initial rotations
+          rotationArray[i] = Math.random() * Math.PI * 2;
+        }
+
+        notesGeometry.setAttribute(
+          "position",
+          new THREE.BufferAttribute(posArray, 3)
+        );
+        notesGeometry.setAttribute(
+          "aScale",
+          new THREE.BufferAttribute(scaleArray, 1)
+        );
+        notesGeometry.setAttribute(
+          "aSpeed",
+          new THREE.BufferAttribute(speedArray, 1)
+        );
+        notesGeometry.setAttribute(
+          "aRotation",
+          new THREE.BufferAttribute(rotationArray, 1)
+        );
+
+        // Note material
+        const noteMaterial = new THREE.ShaderMaterial({
+          uniforms: {
+            uTime: { value: 0 },
+            uColor: { value: new THREE.Color(0x1db954) },
+          },
+          vertexShader: `
+                attribute float aScale;
+                attribute float aSpeed;
+                attribute float aRotation;
+                
+                uniform float uTime;
+                
+                varying float vRotation;
+                
+                void main() {
+                    vec4 modelPosition = modelMatrix * vec4(position, 1.0);
+                    
+                    // Animate notes with slight floating motion
+                    modelPosition.y += sin(uTime * aSpeed * 2.0) * 0.3;
+                    modelPosition.x += cos(uTime * aSpeed) * 0.2;
+                    
+                    vec4 viewPosition = viewMatrix * modelPosition;
+                    gl_Position = projectionMatrix * viewPosition;
+                    
+                    // Set point size - increased size multiplier
+                    gl_PointSize = aScale * 150.0;
+                    gl_PointSize *= (1.0 / - viewPosition.z); // Size attenuation
+                    
+                    vRotation = aRotation + uTime * aSpeed;
+                }
+            `,
+          fragmentShader: `
+                uniform vec3 uColor;
+                varying float vRotation;
+                
+                void main() {
+                    // Draw a rotated musical note
+                    vec2 coord = gl_PointCoord - vec2(0.5);
+                    float len = length(coord);
+                    
+                    // Rotate coordinates
+                    float c = cos(vRotation);
+                    float s = sin(vRotation);
+                    coord = vec2(
+                        coord.x * c - coord.y * s,
+                        coord.x * s + coord.y * c
+                    );
+                    
+                    // Simple note shape
+                    float note = 0.0;
+                    
+                    // Note stem
+                    if (abs(coord.x) < 0.1 && coord.y > -0.5 && coord.y < 0.2) {
+                        note = 1.0;
+                    }
+                    
+                    // Note head (ellipse)
+                    if (length(coord - vec2(0.0, 0.25)) < 0.2) {
+                        note = 1.0;
+                    }
+                    
+                    if (note < 0.5) discard;
+                    
+                    gl_FragColor = vec4(uColor, 0.6);
+                }
+            `,
+          transparent: true,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false,
+        });
+
+        // Notes mesh
+        const notesMesh = new THREE.Points(notesGeometry, noteMaterial);
+        scene.add(notesMesh);
+
+        // Camera position
+        camera.position.z = 5;
+
+        // Clock for animations
+        const clock = new THREE.Clock();
+
+        // Animation loop
+        function animate() {
+          requestAnimationFrame(animate);
+
+          const elapsedTime = clock.getElapsedTime();
+
+          // Update material time uniform
+          noteMaterial.uniforms.uTime.value = elapsedTime;
+
+          // Rotate entire scene slowly
+          notesMesh.rotation.y = elapsedTime * 0.05;
+
+          renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Handle window resize
+        window.addEventListener("resize", function () {
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Sample data for trending songs
+        const trendingSongs = [
+          {
+            id: 1,
+            title: "Finding Her",
+            artist: "Kushagra, Bharath, Saalreal",
+            cover: "finding_her.jpg",
+          },
+          {
+            id: 2,
+            title: "Pal Pal",
+            artist: "Afusic, AllSoomroMusic",
+            cover:
+              "https://images.unsplash.com/photo-1671726203454-5d7a5370a9f4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bXVzaWMlMjBhbGJ1bXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60",
+          },
+          {
+            id: 3,
+            title: 'Koi Naa (From "Bhool Chuk Maaf")',
+            artist: "Tanishk Bagchi, Gifty, Harnoor, Shreya...",
+            cover:
+              "https://images.unsplash.com/photo-1619983081563-430f63602796?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8bXVzaWMlMjBhbGJ1bXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60",
+          },
+          {
+            id: 4,
+            title: 'Khudaya Isha (From "Abir Gulaal")',
+            artist: "Arijit Singh, Shilpa Rao, Amit Trivedi,...",
+            cover: "khudaya_ishq.jpeg",
+          },
+          {
+            id: 5,
+            title: "Supreme",
+            artist: "Shubh",
+            cover: "supreme.jpg",
+          },
+        ];
+
+        // Sample data for popular artists
+        const popularArtists = [
+          {
+            id: 1,
+            name: "Pritam",
+            image:
+              "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8c2luZ2VyfGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60",
+          },
+          {
+            id: 2,
+            name: "Arijit Singh",
+            image: "arjit_singh.jpg",
+          },
+          {
+            id: 3,
+            name: "A.R. Rahman",
+            image: "ar_rahaman.jpg",
+          },
+          {
+            id: 4,
+            name: "Sachin-Jigar",
+            image:
+              "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8bXVzaWNpYW58ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60",
+          },
+          {
+            id: 5,
+            name: "Vishal-Shekhar",
+            image: "Vishal-Shekhar.jpg",
+          },
+        ];
+
+        // Combined data for popular albums and singles
+        const popularAlbumsAndSingles = [
+          // Albums
+          {
+            id: 1,
+            title: "Midnight Memories",
+            artist: "One Direction",
+            cover: "One Direction.jpg",
+            type: "album",
+          },
+          {
+            id: 2,
+            title: "Divide",
+            artist: "Ed Sheeran",
+            cover: "Ed _Sheeran.jpg",
+            type: "album",
+          },
+          {
+            id: 3,
+            title: "Lover",
+            artist: "Taylor Swift",
+            cover: "taylor_swift.jpg",
+            type: "album",
+          },
+          {
+            id: 4,
+            title: "Justice",
+            artist: "Justin Bieber",
+            cover: "justin_beiber.jpg",
+            type: "album",
+          },
+          {
+            id: 5,
+            title: "Planet Her",
+            artist: "Doja Cat",
+            cover: "doja_cat.jpg",
+            type: "album",
+          },
+          // Singles
+          {
+            id: 6,
+            title: "Blinding Lights",
+            artist: "The Weeknd",
+            cover: "weekend_blinding_lights.jpg",
+            type: "single",
+          },
+          {
+            id: 7,
+            title: "Dance Monkey",
+            artist: "Tones and I",
+            cover: "tones_and_i.jpg",
+            type: "single",
+          },
+          {
+            id: 8,
+            title: "Stay",
+            artist: "The Kid LAROI, Justin Bieber",
+            cover: "the_kid_laori.jpg",
+            type: "single",
+          },
+          {
+            id: 9,
+            title: "Levitating",
+            artist: "Dua Lipa",
+            cover: "dua_lipa.jpg",
+            type: "single",
+          },
+          {
+            id: 10,
+            title: "Save Your Tears",
+            artist: "The Weeknd",
+            cover: "weekend.jpg",
+            type: "single",
+          },
+        ];
+
+        // Sample data for popular radio stations
+        const popularRadio = [
+          {
+            id: 1,
+            title: "Today's Top Hits",
+            description: "The most popular songs right now",
+            cover: "top_todays_hit.jpg",
+          },
+          {
+            id: 2,
+            title: "Rock Classics",
+            description: "Rock legends & epic songs",
+            cover: "rock_classic.jpg",
+          },
+          {
+            id: 3,
+            title: "Chill Hits",
+            description: "Kick back to the best new and recent chill hits",
+            cover:
+              "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fG11c2ljfGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60",
+          },
+          {
+            id: 4,
+            title: "Mood Booster",
+            description: "Get happy with today's dose of feel-good songs",
+            cover: "mood_booster.jpg",
+          },
+          {
+            id: 5,
+            title: "Indie Mix",
+            description: "The best indie tracks right now",
+            cover:
+              "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bXVzaWN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60",
+          },
+        ];
+
+        // Sample data for featured charts
+        const featuredCharts = [
+          {
+            id: 1,
+            title: "Top Songs Global",
+            description:
+              "Your weekly update of the most played tracks right now",
+            cover: "top_global_songs.jpg",
+            type: "GLOBAL",
+          },
+          {
+            id: 2,
+            title: "Top Songs India",
+            description:
+              "Your weekly update of the most played tracks right now",
+            cover:
+              "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8bXVzaWN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60",
+            type: "INDIA",
+          },
+          {
+            id: 3,
+            title: "Top 50",
+            description:
+              "Your daily update of the most played tracks right now",
+            cover: "top_50_global.jpeg",
+            type: "GLOBAL",
+          },
+          {
+            id: 4,
+            title: "Top 50",
+            description:
+              "Your daily update of the most played tracks right now",
+            cover: "top_50_india.jpg",
+            type: "INDIA",
+          },
+          {
+            id: 5,
+            title: "Viral 50",
+            description:
+              "Your daily update of the most viral tracks right now - Global",
+            cover: "viral_50_global.jpg",
+            type: "GLOBAL",
+          },
+          {
+            id: 6,
+            title: "Viral 50",
+            description:
+              "Your daily update of the most viral tracks right now - India",
+            cover: "viral_50_india.jpeg",
+            type: "INDIA",
+          },
+        ];
+
+        // Sample data for India's best
+        const indiasBest = [
+          {
+            id: 1,
+            title: "Bangaluru Bangers",
+            description:
+              "The hottest tracks from Bangalore's indie music scene",
+            cover: "bengaluru_bangers.jpg",
+            type: "Indie",
+          },
+          {
+            id: 2,
+            title: "Bollywood Central",
+            description: "The best of Bollywood hits",
+            cover:
+              "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8bXVzaWN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60",
+            type: "Bollywood",
+          },
+          {
+            id: 3,
+            title: "Indie Rap Scene",
+            description: "The best of Indian rap",
+            cover: "indie_rap.jpg",
+            type: "Indie",
+          },
+          {
+            id: 4,
+            title: "Cheers to Chennai",
+            description: "Best of Kollywood",
+            cover: "cheers_to_chennai.jpeg",
+            type: "Regional",
+          },
+          {
+            id: 5,
+            title: "PUNJABI101",
+            description: "Ultimate Punjabi Hits",
+            cover: "punjabi101.jpg",
+            type: "Punjabi",
+          },
+          {
+            id: 6,
+            title: "Tamil Hits",
+            description: "Finest collection of Tamil Music",
+            cover: "tamil_hits.jpeg",
+            type: "Tamil",
+          },
+        ];
+
+        // Function to create trending song cards
+        function createTrendingSongCards(songs) {
+          const container = document.getElementById("trending-songs-scroll");
+          container.innerHTML = "";
+
+          songs.forEach((song) => {
+            const card = document.createElement("div");
+            card.className = "trending-song-card card-hover-effect";
+            card.innerHTML = `
+                    <div class="trending-song-cover-container">
+                        <img src="${song.cover}" alt="${song.title}" class="trending-song-cover">
+                    </div>
+                    <h3 class="trending-song-title">${song.title}</h3>
+                    <p class="trending-song-artist">${song.artist}</p>
+                    <div class="play-button">
+                        <i class="fas fa-play"></i>
+                    </div>
+                `;
+            container.appendChild(card);
+          });
+        }
+
+        // Function to create artist cards
+        function createArtistCards(artists) {
+          const container = document.getElementById("popular-artists-grid");
+          container.innerHTML = "";
+
+          artists.forEach((artist) => {
+            const card = document.createElement("div");
+            card.className = "artist-card card-hover-effect";
+            card.innerHTML = `
+                    <div class="artist-image-container">
+                        <img src="${artist.image}" alt="${artist.name}" class="artist-image">
+                    </div>
+                    <h3 class="artist-name">${artist.name}</h3>
+                    <p class="artist-label">Artist</p>
+                    <div class="play-button">
+                        <i class="fas fa-play"></i>
+                    </div>
+                `;
+            container.appendChild(card);
+          });
+        }
+
+        // Function to create album/single cards
+        function createAlbumAndSingleCards(items) {
+          const container = document.getElementById(
+            "popular-albums-singles-grid"
+          );
+          container.innerHTML = "";
+
+          items.forEach((item) => {
+            const card = document.createElement("div");
+            card.className = "album-single-card card-hover-effect";
+
+            const typeBadge =
+              item.type === "album"
+                ? '<span class="type-badge album-badge">Album</span>'
+                : '<span class="type-badge single-badge">Single</span>';
+
+            card.innerHTML = `
+                    <div class="cover-container">
+                        ${typeBadge}
+                        <img src="${item.cover}" alt="${item.title}" class="album-single-cover">
+                    </div>
+                    <h3 class="album-single-title">${item.title}</h3>
+                    <p class="album-single-artist">${item.artist}</p>
+                    <div class="play-button">
+                        <i class="fas fa-play"></i>
+                    </div>
+                `;
+            container.appendChild(card);
+          });
+        }
+
+        // Function to create radio cards
+        function createRadioCards(radioStations) {
+          const container = document.getElementById("popular-radio-grid");
+          container.innerHTML = "";
+
+          radioStations.forEach((radio) => {
+            const card = document.createElement("div");
+            card.className = "radio-card card-hover-effect";
+            card.innerHTML = `
+                    <div class="radio-cover-container">
+                        <img src="${radio.cover}" alt="${radio.title}" class="radio-cover">
+                    </div>
+                    <h3 class="radio-title">${radio.title}</h3>
+                    <p class="radio-description">${radio.description}</p>
+                    <div class="play-button">
+                        <i class="fas fa-play"></i>
+                    </div>
+                `;
+            container.appendChild(card);
+          });
+        }
+
+        // Function to create chart cards
+        function createChartCards(charts) {
+          const container = document.getElementById("featured-charts-grid");
+          container.innerHTML = "";
+
+          charts.forEach((chart) => {
+            const card = document.createElement("div");
+            card.className = "chart-card card-hover-effect";
+            card.innerHTML = `
+                    <div class="chart-cover-container">
+                        <img src="${chart.cover}" alt="${chart.title}" class="chart-cover">
+                    </div>
+                    <div class="chart-content">
+                        <span class="chart-type">${chart.type}</span>
+                        <h3 class="chart-title">${chart.title}</h3>
+                        <p class="chart-description">${chart.description}</p>
+                    </div>
+                    <div class="play-button">
+                        <i class="fas fa-play"></i>
+                    </div>
+                `;
+            container.appendChild(card);
+          });
+        }
+
+        // Function to create India's best cards
+        function createIndiaCards(items) {
+          const container = document.getElementById("indias-best-grid");
+          container.innerHTML = "";
+
+          items.forEach((item) => {
+            const card = document.createElement("div");
+            card.className = "india-card card-hover-effect";
+            card.innerHTML = `
+                    <div class="india-cover-container">
+                        <img src="${item.cover}" alt="${item.title}" class="india-cover">
+                    </div>
+                    <div class="india-content">
+                        <span class="india-type">${item.type}</span>
+                        <h3 class="india-title">${item.title}</h3>
+                        <p class="india-description">${item.description}</p>
+                    </div>
+                    <div class="play-button">
+                        <i class="fas fa-play"></i>
+                    </div>
+                `;
+            container.appendChild(card);
+          });
+        }
+
+        // Mobile menu toggle functionality
+        const mobileMenuBtn = document.querySelector(".mobile-menu-btn");
+        const navLinks = document.querySelector(".nav-links");
+        let menuOpen = false;
+
+        function toggleMenu() {
+          menuOpen = !menuOpen;
+          if (menuOpen) {
+            navLinks.style.display = "flex";
+            navLinks.style.flexDirection = "column";
+            navLinks.style.position = "absolute";
+            navLinks.style.top = "80px";
+            navLinks.style.right = "20px";
+            navLinks.style.backgroundColor = "rgba(0, 0, 0, 0.9)";
+            navLinks.style.padding = "20px";
+            navLinks.style.borderRadius = "10px";
+            navLinks.style.gap = "15px";
+            navLinks.style.width = "200px";
+          } else {
+            navLinks.style.display = "none";
+          }
+        }
+
+        if (mobileMenuBtn) {
+          mobileMenuBtn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            toggleMenu();
+          });
+        }
+
+        // Close menu when clicking anywhere else
+        document.addEventListener("click", function () {
+          if (menuOpen) {
+            toggleMenu();
+          }
+        });
+
+        // Prevent menu from closing when clicking inside it
+        if (navLinks) {
+          navLinks.addEventListener("click", function (e) {
+            e.stopPropagation();
+          });
+        }
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+          anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute("href")).scrollIntoView({
+              behavior: "smooth",
+            });
+          });
+        });
+
+        // Populate all sections
+        createTrendingSongCards(trendingSongs);
+        createArtistCards(popularArtists);
+        createAlbumAndSingleCards(popularAlbumsAndSingles);
+        createRadioCards(popularRadio);
+        createChartCards(featuredCharts);
+        createIndiaCards(indiasBest);
+      });
+    </script>
+  </body>
+</html>
